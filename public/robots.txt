@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Disallow API routes from crawling
+Disallow: /api/
+
+# Sitemaps
+Sitemap: https://hypacode.vercel/sitemap.xml
+
+# Crawl-delay (optional, friendly)
+Crawl-delay: 1
