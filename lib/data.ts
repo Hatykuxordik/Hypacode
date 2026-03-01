@@ -44,13 +44,17 @@ export const certificates = [
 ] as const;
 
 export const aboutNarrative = {
-  pullQuote:
-    "From biochem labs to production codebases — I bring the same methodical precision to both.",
+  pullQuote: "Engineering interfaces that users understand instantly.",
   story: [
-    "I started writing code in 2019 out of curiosity — and that curiosity never stopped. What began as experimenting with HTML and JavaScript during my Biochemistry studies at Obafemi Awolowo University turned into a full career pivot. I graduated in 2024, but by then, I was already building production software.",
-    "The transition from science to software wasn't a departure — it was a continuation. In biochemistry, you're constantly dealing with complex systems, precise measurements, and the consequences of getting things wrong. Software engineering is the same. I brought that mindset into every codebase I've worked in.",
-    "Since 2023, I've shipped real products used by real people: a spend management platform for businesses at Villeto, a banking simulator with full transaction flows, a hotel website with an AI concierge that drove actual bookings. I don't do portfolio pieces. I do production software.",
-    "I'm based in Lagos, Nigeria — one of Africa's most vibrant tech ecosystems. I work with clients globally, communicate in clear English, and operate on WAT (UTC+1). My focus is fintech, SaaS dashboards, and B2B platforms — products where performance and precision actually matter.",
+    "I began writing code in 2019 while studying Biochemistry at Obafemi Awolowo University. What started as curiosity quickly became systems thinking applied differently — replacing lab experiments with interfaces, and hypotheses with production deployments.",
+
+    "My scientific background shaped how I approach software: understand the system first, reduce complexity, and design for predictable outcomes. That mindset carried naturally into frontend engineering, where performance, clarity, and correctness directly affect user trust.",
+
+    "After building production applications across fintech, hospitality, and web platforms as a freelance engineer, I transitioned into product development. Today, I work as a Frontend Engineer at Villeto, building a spend management platform for businesses — designing and shipping the dashboard through which companies manage transactions, virtual cards, permissions, and financial operations.",
+
+    "My work focuses on interfaces where accuracy and responsiveness matter most. Financial software earns trust through speed, clarity, and reliability, and every architectural decision I make is guided by that principle.",
+
+    "Based in Lagos, Nigeria, I collaborate with distributed teams and ship software used by real users daily. I’m most interested in product environments where frontend engineering directly influences business outcomes, not just visuals.",
   ],
   stats: [
     { label: "Years Building", value: "3+" },
@@ -188,8 +192,12 @@ export const skills = {
   ],
   currentlyLearning: [
     {
-      topic: "Rust fundamentals",
-      reason: "Systems thinking transfer from Biochemistry",
+      topic: "Node.js backend architecture",
+      reason: "Building fullstack systems beyond the UI layer",
+    },
+    {
+      topic: "Python for automation and data workflows",
+      reason: "Expanding problem-solving beyond frontend applications",
     },
     {
       topic: "WebAssembly",

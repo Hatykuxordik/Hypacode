@@ -168,8 +168,8 @@ export default function ContactPage() {
               lineHeight: 1.6,
             }}
           >
-            I build fast, accessible React apps for fintech, SaaS, and
-            hospitality brands. Let&apos;s talk about your project.
+            I build fast, accessible, and scalable web applications designed to
+            deliver real business results. Let&apos;s talk about your project.
           </p>
 
           {/* Response time */}
