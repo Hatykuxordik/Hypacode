@@ -164,7 +164,9 @@ function detectLastTopic(history: ChatMessage[]): string | null {
 }
 
 /** Expanded answers when user says "tell me more" after a topic */
-const CONTINUATION_EXPANSIONS: Record<string, string[]> = {
+type ContinuationResponse = string | (() => string);
+
+const CONTINUATION_EXPANSIONS: Record<string, ContinuationResponse[]> = {
   villeto: [
     `Villeto's the most complex thing ${personalInfo.name} has built to date. The dashboard handles virtual card operations, real-time transaction feeds, multi-role permissions (admin vs member vs viewer), and expense analytics — all in a single Next.js app.\n\nThe trickiest part was optimistic UI updates: when a user freezes a card, the state has to reflect that instantly before the API confirms it, then gracefully rollback if it fails. He built a custom hook for that.\n\n[Full case study →](/projects/villeto)`,
     `Diving deeper into Villeto — it's a fintech spend management platform in production with live business clients. ${personalInfo.name} owns the entire frontend: onboarding, the main dashboard, card operations, transaction history, and reporting.\n\nStack-wise: Next.js with App Router, TypeScript strict mode, Zustand for global state (chosen over Redux for its flat store model), and React Query for server state. Shadcn/ui for the component layer.\n\n[Case study →](/projects/villeto)`,
@@ -972,7 +974,8 @@ export function matchOfflineKB(
   if (isContinuation(input) && history.length >= 2) {
     const topic = detectLastTopic(history);
     if (topic && CONTINUATION_EXPANSIONS[topic]) {
-      return pick(CONTINUATION_EXPANSIONS[topic]);
+      const raw = pick(CONTINUATION_EXPANSIONS[topic]);
+      return typeof raw === "function" ? raw() : raw;
     }
   }
 

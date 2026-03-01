@@ -6,6 +6,8 @@ export const personalInfo = {
   location: "Lagos, Nigeria",
   timezone: "WAT (UTC+1)",
   availability: "Available for new projects",
+  /** Human-readable qualifier shown alongside availability, e.g. "from Q2 2026" */
+  availabilityFrom: "from Q2 2026",
   responseTime: "Usually within a few hours",
   displayEmail: "hatykuxordik@gmail.com",
   github: "https://github.com/hatykuxordik",
@@ -18,6 +20,33 @@ export const personalInfo = {
     "I build Interfaces that earn trust and drive results with precision — built for teams that refuse slow, fragile, or forgettable products.",
   resumeUrl: "/assets/Sodiq-Atiku-Frontend-Developer-Resume-CV.pdf",
   twitter: "https://x.com/Hypacode",
+} as const;
+
+// ── Pricing ───────────────────────────────────────────────────────────────────
+
+export const pricing = {
+  tiers: [
+    { label: "Landing page", range: "$350–$600", weeks: "1–2 weeks" },
+    { label: "Business website", range: "$800–$1,500", weeks: "2–3 weeks" },
+    {
+      label: "Web app / SaaS dashboard",
+      range: "$1,500–$4,000",
+      weeks: "3–8 weeks",
+    },
+    {
+      label: "Mobile app (React Native / PWA)",
+      range: "$6,000–$15,000",
+      weeks: "8–16 weeks",
+    },
+  ],
+  addOns: [
+    { label: "Auth", price: "+$300" },
+    { label: "Payments", price: "+$500" },
+    { label: "Admin dashboard", price: "+$400" },
+    { label: "API integration", price: "+$200" },
+    { label: "CMS", price: "+$250" },
+    { label: "Maintenance", price: "+$200/mo" },
+  ],
 } as const;
 
 export const certificates = [

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Sparkles, X, Send, RotateCcw, Copy, Check } from "lucide-react";
 import { matchOfflineKB } from "@/lib/chat-context";
+import { personalInfo } from "@/lib/data";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -518,7 +519,7 @@ export default function AIChatWidget() {
         // soft contact prompt (no error styling, no retry button).
         const fallback =
           matchOfflineKB(text, updatedMessages) ||
-          `I couldn't reach the server right now. You can [contact Sodiq](/contact) or [book a call](https://cal.com/sodiq-atiku-ljdgnr/30min) directly.`;
+          `I couldn't reach the server right now. You can [contact Sodiq](/contact) or [book a call](${personalInfo.calBooking30}) directly.`;
         setMessages((prev) =>
           prev.map((m) =>
             m.id === assistantId ? { ...m, content: fallback } : m,

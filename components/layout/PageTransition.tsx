@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, cubicBezier } from "framer-motion";
 import { useEffect, useState } from "react";
 
 // ─── Thin progress bar — the real "professional" signal ──────────────────────
@@ -18,7 +18,7 @@ function RouteProgress({ active }: { active: boolean }) {
       }
       transition={
         active
-          ? { duration: 0.3, ease: [0.4, 0, 0.2, 1] }
+          ? { duration: 0.3, ease: cubicBezier(0.4, 0, 0.2, 1) }
           : { duration: 0.2, ease: "easeOut" }
       }
       style={{
@@ -60,16 +60,16 @@ const pageVariants = {
     filter: "blur(0px)",
     transition: {
       duration: 0.22, // fast enough to feel instant
-      ease: [0.25, 0.46, 0.45, 0.94], // ease-out-quad — decelerates naturally
+      ease: cubicBezier(0.25, 0.46, 0.45, 0.94), // ease-out-quad — decelerates naturally
       opacity: { duration: 0.18 }, // opacity slightly faster than position
     },
   },
   exit: {
     opacity: 0,
-    y: -4, // tiny upward nudge on exit, barely visible
+    y: -4,
     transition: {
-      duration: 0.12, // very fast exit — don't make users wait
-      ease: "easeIn",
+      duration: 0.12,
+      ease: cubicBezier(0.42, 0, 1, 1),
     },
   },
 };

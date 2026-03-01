@@ -481,7 +481,7 @@ export default function EstimatePage() {
   }
 
   async function handleDownloadPDF() {
-    if (!estimate || estimate === false) return;
+    if (!estimate) return;
     setIsPdfLoading(true);
     try {
       await generateQuotePDF({
@@ -837,15 +837,13 @@ export default function EstimatePage() {
             <div style={{ marginBottom: "var(--space-5)" }}>
               <h3
                 style={{
-                  fontSize: "var(--text-base)",
+                  fontSize: "var(--text-xs)",
                   fontWeight: 700,
-                  color: "var(--text-primary)",
+                  color: "var(--text-muted)",
                   marginBottom: "var(--space-2)",
                   fontFamily: "var(--font-mono)",
                   letterSpacing: "0.05em",
                   textTransform: "uppercase",
-                  fontSize: "var(--text-xs)",
-                  color: "var(--text-muted)",
                 }}
               >
                 Timeline
@@ -1271,7 +1269,7 @@ export default function EstimatePage() {
             )}
 
             {/* Estimate result */}
-            {estimate && estimate !== false && (
+            {estimate && (
               <div>
                 {/* Estimate range */}
                 <div

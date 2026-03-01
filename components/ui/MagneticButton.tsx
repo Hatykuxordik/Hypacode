@@ -22,9 +22,7 @@ export default function MagneticButton({
   href,
   ...props
 }: MagneticButtonProps) {
-  const ref = useRef<HTMLButtonElement | HTMLAnchorElement | HTMLAnchorElement>(
-    null,
-  ); // Adjust ref type for Link
+  const ref = useRef<HTMLButtonElement | HTMLAnchorElement>(null); // Simplified ref type
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -48,10 +46,10 @@ export default function MagneticButton({
           y: distanceY * strength,
           rotateY: (distanceX / range) * -5, // Invert for natural 3D feel
           rotateX: (distanceY / range) * 5,
-        },
+        } as any, // Cast to any to bypass TypeScript error on shorthand properties
         {
           duration: 0.3, // Spring-like timing
-          easing: "spring", // Use Motion One's spring easing
+          type: "spring", // Use Motion One's spring type
           stiffness: 300,
           damping: 30,
         },
@@ -67,10 +65,10 @@ export default function MagneticButton({
           y: 0,
           rotateX: 0,
           rotateY: 0,
-        },
+        } as any, // Cast to any to bypass TypeScript error on shorthand properties
         {
           duration: 0.3,
-          easing: "spring",
+          type: "spring",
           stiffness: 300,
           damping: 30,
         },
