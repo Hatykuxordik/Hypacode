@@ -131,6 +131,15 @@ function detectLastTopic(history: ChatMessage[]): string | null {
   if (c.includes("taskify")) return "taskify";
   if (c.includes("gamesnap")) return "gamesnap";
   if (
+    c.includes("unistudyhub") ||
+    c.includes("study hub") ||
+    c.includes("mathvisual") ||
+    (c.includes("ocr") && c.includes("quiz")) ||
+    (c.includes("leaderboard") && c.includes("university")) ||
+    (c.includes("past question") && c.includes("platform"))
+  )
+    return "unistudyhub";
+  if (
     c.includes("landing page") ||
     c.includes("$350") ||
     c.includes("saas dashboard")
@@ -181,6 +190,12 @@ const CONTINUATION_EXPANSIONS: Record<string, ContinuationResponse[]> = {
   globalfinder: [
     `Global Finder's interesting from an architecture standpoint. It pulls from multiple public APIs (geography, weather, currency, points of interest), normalises different response shapes into one consistent data model, and handles each API's error states and rate limits independently.\n\nAll filters sync to URL params — so every search result is shareable and bookmarkable. WCAG AA compliant throughout.\n\n[Live →](https://global-finder.vercel.app/)`,
   ],
+  // ── UniStudyHub ──────────────────────────────────────────────────────────────
+  unistudyhub: [
+    `Going deeper on UniStudyHub — the hardest engineering problem was the multi-modal data ingestion pipeline. OCR extraction had to accurately preserve mathematical formulas before handing them off to MathVisual for browser rendering. A mis-parsed integral or matrix would be silently wrong, so the validation layer is strict.\n\nThe CSV bulk-upload system handles large payloads gracefully — rejecting malformed rows with inline errors rather than failing the whole batch. That alone cut content digitization time by over 90%.\n\n[GitHub →](https://github.com/Hatykuxordik/unistudyhub)`,
+    `The leaderboard is more interesting than it looks. A naive points-only ranking would unfairly favour longer quizzes. Instead, the ranking engine normalises by accuracy percentage first, then by time-per-question — so a student who scores 18/20 in 5 minutes on a 20-question quiz ranks fairly against one who scores 9/10 in 3 minutes on a 10-question quiz.\n\nOn the reading side, the AI tutor integration and MathVisual rendering work in tandem — students can highlight a complex equation and ask for an explanation, getting a response that's already aware of the surrounding context.\n\n[GitHub →](https://github.com/Hatykuxordik/unistudyhub)`,
+  ],
+  // ────────────────────────────────────────────────────────────────────────────
   pricing: [
     `To give more context on the pricing — those are starting points, not quotes. The actual number depends on design complexity, number of integrations, whether there's existing design or if ${personalInfo.name} is working from scratch, and timeline.\n\nThe add-ons stack up fast: a web app with auth, payments, and an admin dashboard would land closer to $2,500–$3,000 rather than $1,500. [The estimate tool →](/estimate) gives a more precise number.\n\nWhat kind of project are you thinking about?`,
     `The ranges are conservative — scope is what really drives the final number. A "simple" landing page with heavy animations and a CMS could hit $800; a "basic" web app with auth + integrations could hit $2,500+.\n\n[Use the estimate tool →](/estimate) — it walks through the key variables and gives a real number. Takes about 2 minutes.`,
@@ -296,7 +311,7 @@ export const OFFLINE_KB: KBEntry[] = [
   {
     patterns: ["what can you do", "what do you know", "help", "what can i ask"],
     answers: [
-      `I can answer questions about:\n\n- **Sodiq's projects** — Villeto, Fastpay, ODM Groove Hotel, and more\n- **His stack** — React, Next.js, TypeScript, Tailwind, Supabase...\n- **Pricing** — rough ballparks by project type\n- **Availability** — when he's free and how to book\n- **Background** — career, experience, education\n- **Contact** — email, booking links, CV download\n\nBasic things too — date, time, math. Just ask.`,
+      `I can answer questions about:\n\n- **Sodiq's projects** — Villeto, Fastpay, UniStudyHub, ODM Groove Hotel, and more\n- **His stack** — React, Next.js, TypeScript, Tailwind, Supabase...\n- **Pricing** — rough ballparks by project type\n- **Availability** — when he's free and how to book\n- **Background** — career, experience, education\n- **Contact** — email, booking links, CV download\n\nBasic things too — date, time, math. Just ask.`,
     ],
     followUps: [
       `Where would you like to start?`,
@@ -678,6 +693,34 @@ export const OFFLINE_KB: KBEntry[] = [
     followUps: [`Want to hear about the adaptive polling strategy?`],
   },
 
+  // ── UniStudyHub ────────────────────────────────────────────────────────────────
+  {
+    patterns: [
+      "unistudyhub",
+      "study hub",
+      "edtech",
+      "university platform",
+      "study platform",
+      "past questions",
+      "past question",
+      "mathvisual",
+      "math visual",
+      "ocr digitiz",
+      "quiz platform",
+      "leaderboard ranking",
+      "study assessment",
+    ],
+    topic: "unistudyhub",
+    answers: [
+      `UniStudyHub is an advanced educational ecosystem for university students — structured notes, dynamic quizzes, an integrated AI tutor, and a global leaderboard, all in one platform.\n\nThe standout engineering: Python-based OCR to digitize decades of physical past exam papers, bulk CSV upload for rapid curriculum onboarding, and MathVisual rendering for STEM equations directly in the browser. Cut content digitization time by over 90%.\n\n**Stack:** Next.js, TypeScript, Supabase, Python, OCR Processing, MathVisual, Tailwind CSS.\n\n[GitHub →](https://github.com/Hatykuxordik/unistudyhub)`,
+      `UniStudyHub solves a real problem: university study materials are scattered, and STEM students specifically struggle on platforms that can't render complex mathematical notation.\n\n${personalInfo.name} built a multi-modal ingestion pipeline — Python OCR for scanned past papers, CSV bulk upload for quizzes and users — plus a normalised leaderboard that ranks fairly across quizzes of different lengths (accuracy percentage first, then time-per-question). The AI tutor is context-aware, so explanations account for surrounding content.\n\n**Stack:** Next.js, TypeScript, Supabase, Python, MathVisual, Tailwind CSS.\n\n[GitHub →](https://github.com/Hatykuxordik/unistudyhub)`,
+    ],
+    followUps: [
+      `Want to know more about how the OCR pipeline or the leaderboard ranking engine works?`,
+      `Curious about how the AI tutor and MathVisual work together for STEM subjects?`,
+    ],
+  },
+
   // ── Experience ─────────────────────────────────────────────────────────────────
   {
     patterns: [
@@ -856,8 +899,8 @@ export const OFFLINE_KB: KBEntry[] = [
     ],
     topic: "projects",
     answers: [
-      `Right now ${personalInfo.name} is:\n\n- **Full-time:** Frontend Engineer at [Villeto](/projects/villeto) — spend management dashboard\n- **In progress:** [Fastpay](https://fastpayy.vercel.app/) — digital banking simulator\n- **In progress:** [GameSnap](https://github.com/hatykuxordik/gamesnap) — live sports data platform`,
-      `${personalInfo.name}'s currently juggling three things: Villeto full-time, Fastpay as a side project in fintech, and GameSnap — a live sports data platform.\n\n[Fastpay →](https://fastpayy.vercel.app/) · [GameSnap →](https://github.com/hatykuxordik/gamesnap)`,
+      `Right now ${personalInfo.name} is:\n\n- **Full-time:** Frontend Engineer at [Villeto](/projects/villeto) — spend management dashboard\n- **In progress:** [Fastpay](https://fastpayy.vercel.app/) — digital banking simulator\n- **In progress:** [GameSnap](https://github.com/hatykuxordik/gamesnap) — live sports data platform\n- **In progress:** [UniStudyHub](https://github.com/Hatykuxordik/unistudyhub) — university study & assessment platform`,
+      `${personalInfo.name}'s currently juggling four things: Villeto full-time, Fastpay in fintech, GameSnap for live sports data, and UniStudyHub — an EdTech platform with OCR past-paper digitization, bulk CSV onboarding, and an AI tutor with MathVisual STEM rendering.\n\n[Fastpay →](https://fastpayy.vercel.app/) · [GameSnap →](https://github.com/hatykuxordik/gamesnap) · [UniStudyHub →](https://github.com/Hatykuxordik/unistudyhub)`,
     ],
     followUps: [`Want to know more about any of these?`],
   },
@@ -1018,6 +1061,16 @@ ALSO KNOWS: ${skills.alsoFamiliar.join(", ")}
 
 PROJECTS:
 ${projects.map((p) => `- ${p.name}: ${p.tagline} (${p.status})${p.liveUrl ? ` → ${p.liveUrl}` : ""}`).join("\n")}
+
+UNISTUDYHUB DETAILS (In Progress — EdTech):
+- Full name: UniStudyHub — The Ultimate University Study & Assessment Platform
+- Stack: Next.js, TypeScript, Supabase, Python, OCR Processing, MathVisual, Tailwind CSS
+- GitHub: https://github.com/Hatykuxordik/unistudyhub
+- Key features: structured notes hierarchy, dynamic quizzes, AI tutor, global leaderboard
+- OCR pipeline: Python-based digitization of physical past exam papers → MathVisual renders complex STEM equations in-browser
+- Bulk CSV upload: rapid curriculum onboarding; reduced digitization time by 90%+
+- Leaderboard algorithm: normalises by accuracy % first, then time-per-question — fairly ranks quizzes of varying length
+- Problem solved: scattered university materials + no proper math rendering for STEM students
 
 PRICING:
 - Landing page: $350–$600 | Business site: $800–$1,500 | Web app: $1,500–$4,000 | Mobile: $6,000–$15,000
