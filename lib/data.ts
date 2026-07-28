@@ -247,20 +247,20 @@ export const experience = [
     period: "January 2026 — Present",
     location: "Lagos, Nigeria",
     description:
-      "Building the core spend management dashboard for Villeto's business clients. Responsible for the full frontend — from onboarding flows to real-time transaction tracking, virtual card management, and role-based access control.",
+      "Engineering the frontend ecosystem for Villeto, an enterprise-grade spend management and procurement platform. Responsible for the primary dashboard (app.villeto.com), the vendor management portal (vendors.villeto.com), and the marketing landing page (villeto.com).",
     highlights: [
-      "Architected and shipped the primary dashboard used by Villeto's business clients",
-      "Implemented optimistic updates for transactions — reducing perceived latency",
-      "Built the card operations module: issue, freeze, and configure virtual cards",
-      "Collaborated closely with design and backend teams for API contract design",
+      "Architected and shipped the primary dashboard handling complex procurement workflows (PRs & POs)",
+      "Implemented a highly granular, resource-and-action-based permission system (RBAC)",
+      "Built the card operations module with optimistic UI updates to reduce perceived latency",
+      "Integrated contextual Walkthroughs and Setup Guides for seamless user onboarding",
     ],
     stack: [
-      "Next.js",
+      "Next.js 16",
       "TypeScript",
       "Zustand",
-      "Shadcn/ui",
+      "React Query v5",
       "Tailwind CSS",
-      "React Query",
+      "React Hook Form",
     ],
   },
   {
@@ -313,60 +313,64 @@ export const projects: Project[] = [
   {
     slug: "villeto",
     name: "Villeto",
-    tagline: "Spend Management Platform",
-    category: ["Fintech", "Frontend"],
-    status: "In Progress",
-    liveUrl: null,
+    tagline: "The Operating System for Procurement & Financial Operations",
+    category: ["Fintech", "Enterprise", "Frontend"],
+    status: "Live",
+    liveUrl: "https://villeto.com",
     githubUrl: null,
     color: "#6366f1",
     image: "/assets/projects/villeto.png",
     imageAlt:
       "Villeto spend management dashboard showing expense tracking interface with transaction list and analytics",
     outcome:
-      "Production platform actively powering Villeto's business operations",
+      "Production platform actively powering Villeto's business operations across multiple web apps",
     stack: [
-      "Next.js",
+      "Next.js 16",
       "TypeScript",
       "Zustand",
-      "React Query",
+      "React Query v5",
+      "React Hook Form",
       "Tailwind CSS",
-      "Shadcn/ui",
+      "Radix UI",
     ],
     featured: true,
     overview:
-      "Villeto is a fintech startup building spend management tools for businesses. As their Frontend Engineer, I own the full dashboard — the primary interface through which business clients control their spending, cards, and vendor operations.",
+      "Villeto is the operating system for modern finance teams—unifying seven core products into one workflow: Cards, Expenses, Procurement Intake, Vendor Management, BillPay, and Ledger. As their Frontend Engineer, I engineered the entire frontend ecosystem across the primary dashboard (app.villeto.com), the vendor portal (vendors.villeto.com), and the high-conversion marketing landing page (villeto.com).",
     problem:
-      "Businesses using Villeto needed a single interface to manage their entire financial stack: virtual cards, expense tracking, vendor payments, and team permissions. Existing solutions were either too complex for SMBs or too limited for growing teams. The product needed to be fast, clear, and trustworthy — finance software earns trust through precision.",
+      "Finance teams were struggling with fragmented workflows—managing procurement, vendor onboarding, invoice verification, and card expenses across 10 different disconnected tools. They needed a single, intuitive interface with strict controls (audit logs, policy-as-code approvals, and granular RBAC). The platform needed to handle complex data relationships securely without sacrificing performance or user experience.",
     process:
-      "I worked directly with the design and backend teams to define API contracts before any UI was built. This upfront alignment prevented the most common source of frontend rework. I chose Zustand over Redux for global state — the spend dashboard has deeply nested state across cards, transactions, and user permissions, and Zustand's flat store model kept things manageable without boilerplate overhead.",
+      "I built the applications using Next.js 16 (App Router) and TypeScript, ensuring strict type safety from API responses to UI components. Forms were centralized using React Hook Form and Zod to guarantee data integrity. I implemented optimistic UI updates and leveraged React Query's extensive caching to keep the dashboard feeling instantaneous. For onboarding, I integrated contextual Walkthroughs and Setup Guides.",
     technicalDeepDive:
-      "The most interesting technical challenge was optimistic updates for transaction state. When a user freezes a virtual card, the UI must reflect that immediately — before the API confirms it — while gracefully handling failures. I built a custom hook that manages pending states as a Set of IDs, enabling per-item optimism without global loading flags.",
+      "One major technical challenge was the advanced Role-Based Access Control (RBAC). I implemented a highly granular, resource-and-action-based permission system (e.g., `procurement.purchase_request.read_company`) where the UI automatically adapts and gates views or actions based on the user's explicit capabilities and department scope. I also built a custom optimistic update hook for transaction states, utilizing a Set of pending IDs to reflect card operations immediately.",
     results:
-      "The dashboard is in production, actively used by Villeto's business clients. The optimistic update pattern reduced perceived latency on card operations, and the role-based access system handles the full permission matrix without performance impact.",
+      "The ecosystem is in production, streamlining company expenses, purchase requests, and approvals into a seamless experience. The optimistic UI patterns drastically reduced perceived latency, and the strictly bounded components ensure absolute data integrity across app.villeto.com, vendors.villeto.com, and villeto.com.",
     codeSnippet: {
-      language: "typescript",
+      language: "tsx",
       description:
-        "Custom optimistic update hook — used throughout Villeto's card operations",
-      code: `// hooks/useOptimisticTransaction.ts — from Villeto codebase
-export function useOptimisticTransaction<T extends { id: string }>(
-  mutationFn: (item: T) => Promise<void>
-) {
-  const [pending, setPending] = useState<Set<string>>(new Set());
+        "Resource-and-action-based RBAC Gate component — automatically adapts the UI based on explicit user capabilities.",
+      code: `// components/auth/RoleGate.tsx — from Villeto codebase
+import { useAuthStore } from '@/stores/authStore';
+import type { PermissionNode } from '@/lib/types/auth';
 
-  const execute = useCallback(async (item: T) => {
-    setPending(prev => new Set(prev).add(item.id));
-    try {
-      await mutationFn(item);
-    } finally {
-      setPending(prev => {
-        const next = new Set(prev);
-        next.delete(item.id);
-        return next;
-      });
-    }
-  }, [mutationFn]);
+interface RoleGateProps {
+  /** e.g., 'procurement.purchase_request.read_company' */
+  permission: PermissionNode;
+  children: React.ReactNode;
+  fallback?: React.ReactNode;
+}
 
-  return { execute, isPending: (id: string) => pending.has(id) };
+export function RoleGate({ permission, children, fallback = null }: RoleGateProps) {
+  // Zustand store contains a pre-computed Set of permissions for O(1) lookups
+  const permissions = useAuthStore((state) => state.permissions);
+  const isSuperAdmin = useAuthStore((state) => state.isSuperAdmin);
+  
+  const hasAccess = isSuperAdmin || permissions.has(permission);
+
+  if (!hasAccess) {
+    return <>{fallback}</>;
+  }
+
+  return <>{children}</>;
 }`,
     },
   },

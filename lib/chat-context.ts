@@ -177,8 +177,8 @@ type ContinuationResponse = string | (() => string);
 
 const CONTINUATION_EXPANSIONS: Record<string, ContinuationResponse[]> = {
   villeto: [
-    `Villeto's the most complex thing ${personalInfo.name} has built to date. The dashboard handles virtual card operations, real-time transaction feeds, multi-role permissions (admin vs member vs viewer), and expense analytics — all in a single Next.js app.\n\nThe trickiest part was optimistic UI updates: when a user freezes a card, the state has to reflect that instantly before the API confirms it, then gracefully rollback if it fails. He built a custom hook for that.\n\n[Full case study →](/projects/villeto)`,
-    `Diving deeper into Villeto — it's a fintech spend management platform in production with live business clients. ${personalInfo.name} owns the entire frontend: onboarding, the main dashboard, card operations, transaction history, and reporting.\n\nStack-wise: Next.js with App Router, TypeScript strict mode, Zustand for global state (chosen over Redux for its flat store model), and React Query for server state. Shadcn/ui for the component layer.\n\n[Case study →](/projects/villeto)`,
+    `Villeto is the most comprehensive enterprise platform ${personalInfo.name} has engineered. It unifies seven products into one workflow: Cards, Expenses, Procurement Intake, Vendor Management, BillPay, and Ledger. He owns the frontend ecosystem across app.villeto.com, vendors.villeto.com, and the marketing site.\n\nThe most critical engineering challenge was the Role-Based Access Control (RBAC). The UI automatically adapts based on highly granular permissions (e.g., 'procurement.purchase_request.read_company'), ensuring strict policy adherence across entities.\n\n[Full case study →](/projects/villeto)`,
+    `Diving deeper into Villeto — it's the operating system for modern finance teams. ${personalInfo.name} engineered the primary dashboard, the vendor portal, and the high-conversion landing page.\n\nStack-wise: Next.js 16 with App Router, TypeScript strict mode, Zustand for O(1) permission lookups, React Query v5, React Hook Form, and Radix UI.\n\n[Case study →](/projects/villeto)`,
   ],
   fastpay: [
     `Fastpay goes deeper than most banking demos. It has real Supabase auth with token refresh handling, row-level security policies so each user only ever sees their own data, real-time transaction sync across browser tabs using Supabase's Postgres realtime subscriptions, and a Recharts analytics layer.\n\nThe PWA side uses a service worker for asset caching and background sync — so if you go offline after loading, it still works.\n\n[Live →](https://fastpayy.vercel.app/) · [GitHub →](https://github.com/hatykuxordik/fastpay)`,
@@ -611,18 +611,19 @@ export const OFFLINE_KB: KBEntry[] = [
     patterns: [
       "villeto",
       "spend management",
+      "procurement platform",
       "current job",
       "current role",
-      "fintech dashboard",
+      "enterprise",
     ],
     topic: "villeto",
     answers: [
-      `Villeto is ${personalInfo.name}'s current full-time role — Frontend Engineer at a Lagos fintech startup building spend management tools for businesses.\n\n**What he owns:** Virtual card management, real-time transaction tracking, expense analytics, role-based access control, onboarding flows.\n\n**Stack:** Next.js, TypeScript, Zustand, React Query, Tailwind, Shadcn/ui.\n\nIn production with live business users since January 2026.\n\n[Case study →](/projects/villeto)`,
-      `${personalInfo.name} joined Villeto full-time in January 2026 as Frontend Engineer. He built the entire dashboard from scratch — cards, transactions, team permissions, analytics, onboarding.\n\nIt's in production with real business users. Stack: Next.js, TypeScript, Zustand, React Query.\n\n[Case study →](/projects/villeto)`,
+      `Villeto is ${personalInfo.name}'s current full-time role — Frontend Engineer at an enterprise-grade spend management and procurement platform.\n\n**What he engineered:** The primary dashboard (app.villeto.com), the vendor portal (vendors.villeto.com), and the landing page (villeto.com). He handles complex procurement workflows, RBAC, and policy-as-code.\n\n**Stack:** Next.js 16, TypeScript, Zustand, React Query v5, React Hook Form, Tailwind CSS.\n\n[Case study →](/projects/villeto)`,
+      `${personalInfo.name} joined Villeto full-time in January 2026 as Frontend Engineer. He engineered the frontend ecosystem unifying seven core products: Cards, Expenses, Procurement Intake, Vendor Management, BillPay, and Ledger.\n\nStack: Next.js 16, TypeScript, Zustand, React Query v5, Radix UI.\n\n[Case study →](/projects/villeto)`,
     ],
     followUps: [
-      `Want to know more about the technical side of how it was built?`,
-      `Curious about any particular feature — like the card operations or transaction handling?`,
+      `Want to know more about the technical architecture and RBAC permissions?`,
+      `Curious about how he handles the complex multi-product workflows?`,
     ],
   },
 
