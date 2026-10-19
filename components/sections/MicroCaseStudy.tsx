@@ -104,7 +104,7 @@ export default function MicroCaseStudy() {
                 {
                   label: "Result",
                   value:
-                    "Production-grade platform serving live business users at Villeto",
+                    "Frontend Engineer on a 4-person team: shipped 3 production apps with <100ms optimistic UI latency and 99+ Lighthouse score",
                 },
               ].map((row) => (
                 <div

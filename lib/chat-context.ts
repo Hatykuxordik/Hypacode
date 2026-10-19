@@ -900,8 +900,8 @@ export const OFFLINE_KB: KBEntry[] = [
     ],
     topic: "projects",
     answers: [
-      `Right now ${personalInfo.name} is:\n\n- **Full-time:** Frontend Engineer at [Villeto](/projects/villeto) — spend management dashboard\n- **In progress:** [Fastpay](https://fastpayy.vercel.app/) — digital banking simulator\n- **In progress:** [GameSnap](https://github.com/hatykuxordik/gamesnap) — live sports data platform\n- **In progress:** [UniStudyHub](https://github.com/Hatykuxordik/unistudyhub) — university study & assessment platform`,
-      `${personalInfo.name}'s currently juggling four things: Villeto full-time, Fastpay in fintech, GameSnap for live sports data, and UniStudyHub — an EdTech platform with OCR past-paper digitization, bulk CSV onboarding, and an AI tutor with MathVisual STEM rendering.\n\n[Fastpay →](https://fastpayy.vercel.app/) · [GameSnap →](https://github.com/hatykuxordik/gamesnap) · [UniStudyHub →](https://github.com/Hatykuxordik/unistudyhub)`,
+      `Right now ${personalInfo.name} is:\n\n- **Full-time:** Frontend Engineer at [Villeto](/projects/villeto) — spend management dashboard\n- **Live:** [UniStudyHub](https://unistudyhub.vercel.app/) — university study & assessment platform\n- **In progress:** [Fastpay](https://fastpayy.vercel.app/) — digital banking simulator\n- **In progress:** [GameSnap](https://github.com/hatykuxordik/gamesnap) — live sports data platform`,
+      `${personalInfo.name}'s currently focused on Villeto full-time, runs the live EdTech platform [UniStudyHub](https://unistudyhub.vercel.app/) (OCR past-paper digitization, bulk CSV onboarding, AI tutor with MathVisual), and is building Fastpay (fintech simulator) and GameSnap (sports data).\n\n[UniStudyHub →](https://unistudyhub.vercel.app/) · [Fastpay →](https://fastpayy.vercel.app/) · [GameSnap →](https://github.com/hatykuxordik/gamesnap)`,
     ],
     followUps: [`Want to know more about any of these?`],
   },
@@ -1063,8 +1063,9 @@ ALSO KNOWS: ${skills.alsoFamiliar.join(", ")}
 PROJECTS:
 ${projects.map((p) => `- ${p.name}: ${p.tagline} (${p.status})${p.liveUrl ? ` → ${p.liveUrl}` : ""}`).join("\n")}
 
-UNISTUDYHUB DETAILS (In Progress — EdTech):
+UNISTUDYHUB DETAILS (Live — EdTech):
 - Full name: UniStudyHub — The Ultimate University Study & Assessment Platform
+- Live URL: https://unistudyhub.vercel.app/
 - Stack: Next.js, TypeScript, Supabase, Python, OCR Processing, MathVisual, Tailwind CSS
 - GitHub: https://github.com/Hatykuxordik/unistudyhub
 - Key features: structured notes hierarchy, dynamic quizzes, AI tutor, global leaderboard

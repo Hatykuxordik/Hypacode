@@ -5,7 +5,7 @@ Allow: /
 Disallow: /api/
 
 # Sitemaps
-Sitemap: https://hypacode.vercel/sitemap.xml
+Sitemap: https://hypacode.vercel.app/sitemap.xml
 
 # Crawl-delay (optional, friendly)
 Crawl-delay: 1

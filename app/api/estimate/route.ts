@@ -15,6 +15,8 @@ interface RequestBody {
   features: string[];
   timeline: string;
   budgetRange: string;
+  currency: "USD" | "NGN"; // sent by the client toggle
+  honeypot?: string; // must be empty — bots fill it
 }
 
 interface EstimateEntry {
@@ -28,11 +30,20 @@ interface EstimateResult {
   high: number;
   weeks: string;
   breakdown: EstimateEntry[];
+  currency: "USD" | "NGN";
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PRICING MATRIX
+// Fixed NGN table — deliberately not a live conversion so quotes stay stable.
+// Update NGN_RATE manually when you reprice (e.g. ≈ ₦1,650/$1 parallel rate).
 // ─────────────────────────────────────────────────────────────────────────────
+
+/** Update this number manually whenever you want to reprice NGN. */
+const NGN_RATE = 1650;
+function toNGN(usd: number) {
+  return Math.round((usd * NGN_RATE) / 5000) * 5000; // round to nearest ₦5k
+}
 
 const PROJECT_LABELS: Record<string, string> = {
   "landing-page": "Landing Page",
@@ -53,7 +64,8 @@ const BASE_PRICES: Record<string, [number, number]> = {
 
 const FEATURE_LABELS: Record<string, string> = {
   auth: "Authentication & User Accounts",
-  payments: "Payment Processing (Stripe)",
+  // NGN clients get Paystack/Flutterwave instead of Stripe
+  payments: "Payment Processing",
   "real-time": "Real-Time Data & Live Updates",
   cms: "Content Management System",
   analytics: "Analytics Dashboard",
@@ -87,7 +99,40 @@ const TIMELINE_LABELS: Record<string, string> = {
   flexible: "Flexible",
 };
 
-function calcWeeks(projectType: string, timeline: string): string {
+// NGN budget ceilings in Naira
+const NGN_BUDGET_CEILINGS: Record<string, number> = {
+  "under-500k": 500_000,
+  "500k-1.5m": 1_500_000,
+  "1.5m-3m": 3_000_000,
+  "3m-plus": Infinity,
+  "lets-talk": Infinity,
+};
+// USD budget ceilings
+const USD_BUDGET_CEILINGS: Record<string, number> = {
+  "under-1k": 1000,
+  "1k-3k": 3000,
+  "3k-6k": 6000,
+  "6k-plus": Infinity,
+  "lets-talk": Infinity,
+};
+
+function getBudgetCeiling(budgetRange: string, currency: "USD" | "NGN"): number {
+  return currency === "NGN"
+    ? (NGN_BUDGET_CEILINGS[budgetRange] ?? Infinity)
+    : (USD_BUDGET_CEILINGS[budgetRange] ?? Infinity);
+}
+
+function fmt(amount: number, currency: "USD" | "NGN"): string {
+  return currency === "NGN"
+    ? `₦${amount.toLocaleString("en-NG")}`
+    : `$${amount.toLocaleString("en-US")}`;
+}
+
+function calcWeeks(
+  projectType: string,
+  timeline: string,
+  addonCount: number,
+): string {
   const base: Record<string, number> = {
     "landing-page": 2,
     "business-website": 4,
@@ -95,12 +140,28 @@ function calcWeeks(projectType: string, timeline: string): string {
     dashboard: 10,
     "mobile-app": 16,
   };
-  const w = base[projectType] ?? 4;
-  if (timeline === "asap")
-    return `${Math.max(1, Math.ceil(w * 0.65))}–${Math.ceil(w * 0.8)} weeks`;
-  if (timeline === "1-month") return "3–4 weeks";
-  if (timeline === "2-3-months") return `${w}–${w + 2} weeks`;
-  return `${w}–${w + 4} weeks`;
+  // Each add-on adds ~0.5 weeks of scope buffer, capped at 8 extra weeks.
+  const addonExtra = Math.min(Math.ceil(addonCount * 0.5), 8);
+  const w = (base[projectType] ?? 4) + addonExtra;
+
+  let lo: number;
+  let hi: number;
+  if (timeline === "asap") {
+    lo = Math.max(1, Math.ceil(w * 0.65));
+    hi = Math.ceil(w * 0.8);
+  } else if (timeline === "1-month") {
+    lo = 3;
+    hi = Math.max(4, w);
+  } else if (timeline === "2-3-months") {
+    lo = w;
+    hi = w + 2;
+  } else {
+    lo = w;
+    hi = w + 4;
+  }
+
+  // Collapse "N–N weeks" to just "N weeks"
+  return lo === hi ? `${lo} week${lo === 1 ? "" : "s"}` : `${lo}–${hi} weeks`;
 }
 
 function round50(n: number) {
@@ -111,17 +172,23 @@ function buildEstimate(
   projectType: string,
   features: string[],
   timeline: string,
+  currency: "USD" | "NGN" = "USD",
 ): EstimateResult | false {
   if (projectType === "custom") return false;
 
-  const [baseLow, baseHigh] = BASE_PRICES[projectType] ?? [1000, 3000];
+  const [baseLowUSD, baseHighUSD] = BASE_PRICES[projectType] ?? [1000, 3000];
   const mult = TIMELINE_MULTIPLIERS[timeline] ?? 1;
   const breakdown: EstimateEntry[] = [];
 
+  function price(usd: number): number {
+    if (currency === "NGN") return Math.round((toNGN(usd) * mult) / 5000) * 5000;
+    return round50(usd * mult);
+  }
+
   breakdown.push({
     label: PROJECT_LABELS[projectType] ?? projectType,
-    low: round50(baseLow * mult),
-    high: round50(baseHigh * mult),
+    low: price(baseLowUSD),
+    high: price(baseHighUSD),
   });
 
   for (const f of features) {
@@ -129,8 +196,8 @@ function buildEstimate(
     if (fLow > 0) {
       breakdown.push({
         label: FEATURE_LABELS[f] ?? f,
-        low: round50(fLow * mult),
-        high: round50(fHigh * mult),
+        low: price(fLow),
+        high: price(fHigh),
       });
     }
   }
@@ -138,7 +205,7 @@ function buildEstimate(
   const low = breakdown.reduce((s, e) => s + e.low, 0);
   const high = breakdown.reduce((s, e) => s + e.high, 0);
 
-  return { low, high, weeks: calcWeeks(projectType, timeline), breakdown };
+  return { low, high, weeks: calcWeeks(projectType, timeline, features.length), breakdown, currency };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -153,6 +220,9 @@ const C = {
   accent: "#6366f1",
   accentDim: "rgba(99,102,241,0.12)",
   accentBdr: "rgba(99,102,241,0.3)",
+  amber: "#fbbf24",
+  amberDim: "rgba(251,191,36,0.10)",
+  amberBdr: "rgba(251,191,36,0.35)",
   textPri: "#e8eaf0",
   textSec: "#8a95b0",
   textMut: "#4a5568",
@@ -190,12 +260,14 @@ function tableRow(label: string, value: string): string {
 }
 
 function estimateBlock(estimate: EstimateResult): string {
+  const fmtAmt = (n: number) => fmt(n, estimate.currency);
+
   const rows = estimate.breakdown
     .map(
       (item) =>
         `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid ${C.border};">
           <span style="color:${C.textSec};font-size:13px;">${item.label}</span>
-          <span style="color:${C.textPri};font-size:13px;font-family:monospace;">$${item.low.toLocaleString()}–$${item.high.toLocaleString()}</span>
+          <span style="color:${C.textPri};font-size:13px;font-family:monospace;">${fmtAmt(item.low)}–${fmtAmt(item.high)}</span>
         </div>`,
     )
     .join("");
@@ -204,7 +276,7 @@ function estimateBlock(estimate: EstimateResult): string {
     <div style="margin:20px 0;padding:20px;background:${C.accentDim};border:1px solid ${C.accentBdr};border-radius:10px;text-align:center;">
       <p style="color:${C.accent};font-size:11px;margin:0 0 8px;text-transform:uppercase;letter-spacing:0.1em;font-family:monospace;">Total Estimate</p>
       <p style="color:${C.textPri};font-size:32px;font-weight:800;margin:0;letter-spacing:-0.03em;">
-        $${estimate.low.toLocaleString()} – $${estimate.high.toLocaleString()}
+        ${fmtAmt(estimate.low)} – ${fmtAmt(estimate.high)}
       </p>
       <p style="color:${C.textSec};font-size:13px;margin:6px 0 0;">${estimate.weeks} · Valid 30 days</p>
     </div>
@@ -219,8 +291,17 @@ function estimateBlock(estimate: EstimateResult): string {
 function ownerEmailHtml(
   body: RequestBody,
   estimate: EstimateResult | false,
+  budgetMismatch: boolean,
 ): string {
   const isCustom = estimate === false;
+  const currencyLabel = body.currency === "NGN" ? "NGN (₦)" : "USD ($)";
+
+  const mismatchBanner = budgetMismatch
+    ? `<div style="margin:16px 0;padding:14px 16px;background:${C.amberDim};border:1px solid ${C.amberBdr};border-radius:8px;">
+         <p style="color:${C.amber};font-size:12px;font-weight:700;margin:0 0 4px;">⚠️ Budget Mismatch</p>
+         <p style="color:${C.textSec};font-size:13px;margin:0;">Estimate minimum exceeds the client's stated budget. Consider a scoping call or phased build.</p>
+       </div>`
+    : "";
 
   return emailWrapper(
     emailCard(`
@@ -236,7 +317,9 @@ function ownerEmailHtml(
       ${tableRow("Add-ons", body.features.length ? body.features.map((f) => FEATURE_LABELS[f] ?? f).join(", ") : "None")}
       ${tableRow("Timeline", TIMELINE_LABELS[body.timeline] ?? body.timeline)}
       ${tableRow("Budget", body.budgetRange || "—")}
+      ${tableRow("Currency", currencyLabel)}
     </table>
+    ${mismatchBanner}
     ${
       isCustom
         ? `<div style="padding:16px;background:${C.accentDim};border:1px solid ${C.accentBdr};border-radius:8px;">
@@ -252,6 +335,7 @@ function ownerEmailHtml(
   );
 }
 
+
 // ─── Client confirmation ──────────────────────────────────────────────────────
 
 function clientEmailHtml(
@@ -260,6 +344,14 @@ function clientEmailHtml(
 ): string {
   const firstName = body.name.split(" ")[0];
   const isCustom = estimate === false;
+
+  // Payment method note — Stripe isn't available to Nigerian businesses
+  const paymentNote =
+    body.currency === "NGN"
+      ? `<p style="color:${C.textSec};font-size:12px;margin:12px 0 0;line-height:1.6;">
+           💳 Payments for Nigerian clients are processed via <strong style="color:${C.textPri};">Paystack or Flutterwave</strong> — no Stripe required.
+         </p>`
+      : "";
 
   return emailWrapper(
     emailCard(`
@@ -290,6 +382,7 @@ function clientEmailHtml(
            <p style="color:${C.textMut};font-size:11px;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 4px;font-family:monospace;">Project Type</p>
            <p style="color:${C.textPri};font-size:14px;font-weight:600;margin:0;">${PROJECT_LABELS[body.projectType] ?? body.projectType}</p>
          </div>
+         ${paymentNote}
          <div style="background:${C.accentDim};border:1px solid ${C.accentBdr};border-radius:10px;padding:20px;margin:20px 0;">
            <p style="color:${C.textPri};font-size:14px;font-weight:600;margin:0 0 8px;">Ready to lock in your timeline?</p>
            <p style="color:${C.textSec};font-size:13px;margin:0 0 16px;line-height:1.6;">
@@ -324,9 +417,23 @@ function clientEmailHtml(
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as RequestBody;
-    const { name, email, projectType, features = [], timeline } = body;
+    const {
+      name,
+      email,
+      projectType,
+      features = [],
+      timeline,
+      currency = "USD",
+      honeypot,
+    } = body;
 
-    // Validation
+    // ── Honeypot — bots fill it, humans leave it blank ──────────────────────────
+    if (honeypot && honeypot.trim().length > 0) {
+      // Return a convincing 200 so the bot doesn’t retry
+      return NextResponse.json({ success: true, estimate: null });
+    }
+
+    // ── Server-side validation ──────────────────────────────────────────────
     if (!name || name.trim().length < 2)
       return NextResponse.json(
         { success: false, message: "Name is required." },
@@ -342,24 +449,35 @@ export async function POST(req: NextRequest) {
         { success: false, message: "Project type and timeline are required." },
         { status: 400 },
       );
+    if (!(["USD", "NGN"] as string[]).includes(currency))
+      return NextResponse.json(
+        { success: false, message: "Invalid currency." },
+        { status: 400 },
+      );
 
-    // Compute estimate server-side
-    const estimate = buildEstimate(projectType, features, timeline);
+    // ── Compute estimate ────────────────────────────────────────────────────────
+    const estimate = buildEstimate(projectType, features, timeline, currency);
 
-    // Send emails via Resend (both settle independently — never blocks the response)
+    // ── Budget mismatch check ───────────────────────────────────────────────
+    const ceiling = getBudgetCeiling(body.budgetRange, currency);
+    const budgetMismatch =
+      estimate !== false && isFinite(ceiling) && estimate.low > ceiling;
+
+    // ── Send emails ───────────────────────────────────────────────────────────
     const contactEmail = process.env.CONTACT_EMAIL;
     if (contactEmail && process.env.RESEND_API_KEY) {
       const subjectSuffix = estimate
-        ? ` ($${estimate.low.toLocaleString()}–$${estimate.high.toLocaleString()})`
+        ? ` (${fmt(estimate.low, currency)}–${fmt(estimate.high, currency)})`
         : " (Custom)";
+      const mismatchTag = budgetMismatch ? " ⚠️ Budget mismatch" : "";
 
       await Promise.allSettled([
         resend.emails.send({
           from: "Hypacode Portfolio <onboarding@resend.dev>",
           to: [contactEmail],
           replyTo: email,
-          subject: `New estimate: ${PROJECT_LABELS[projectType] ?? projectType}${subjectSuffix} — ${name}`,
-          html: ownerEmailHtml(body, estimate),
+          subject: `New estimate: ${PROJECT_LABELS[projectType] ?? projectType}${subjectSuffix} — ${name}${mismatchTag}`,
+          html: ownerEmailHtml(body, estimate, budgetMismatch),
         }),
         resend.emails.send({
           from: "Sodiq Atiku <onboarding@resend.dev>",

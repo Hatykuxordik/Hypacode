@@ -12,6 +12,12 @@ const socialLinks = [
   { label: "Book a Call", url: personalInfo.calBooking30 },
 ];
 
+const siteLinks = [
+  { label: "How I Work", url: "/process" },
+  { label: "Get an Estimate", url: "/estimate" },
+];
+
+
 // ─────────────────────────────────────────────────────────────────────────────
 // ICONS
 // ─────────────────────────────────────────────────────────────────────────────
@@ -111,6 +117,28 @@ const Footer = () => {
           className="hidden md:flex gap-1 items-center justify-around"
           aria-label="Footer links"
         >
+          {siteLinks.map((link) => (
+            <Link
+              key={link.label}
+              href={link.url}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                width: "fit-content",
+                padding: "8px 12px",
+                borderRadius: "9px",
+                fontSize: "13px",
+                fontWeight: 500,
+                textDecoration: "none",
+                border: "1px solid transparent",
+                color: "var(--text-secondary)",
+                transition: "all 150ms",
+              }}
+            >
+              {link.label}
+            </Link>
+          ))}
           {socialLinks.map((link) => (
             <Link
               key={link.label}
@@ -130,8 +158,6 @@ const Footer = () => {
                 border: "1px solid transparent",
                 color: "var(--text-secondary)",
                 transition: "all 150ms",
-                /* Hover styles (color, bg, border) cannot be expressed in pure inline styles.
-                   Use React state + onMouseEnter/onMouseLeave or a CSS class if needed. */
               }}
             >
               {link.label}

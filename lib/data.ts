@@ -323,7 +323,7 @@ export const projects: Project[] = [
     imageAlt:
       "Villeto spend management dashboard showing expense tracking interface with transaction list and analytics",
     outcome:
-      "Production platform actively powering Villeto's business operations across multiple web apps",
+      "Frontend Engineer on a 4-person team: shipped 3 production web apps powering daily financial operations with <100ms optimistic UI updates and 99+ Lighthouse score",
     stack: [
       "Next.js 16",
       "TypeScript",
@@ -343,7 +343,7 @@ export const projects: Project[] = [
     technicalDeepDive:
       "One major technical challenge was the advanced Role-Based Access Control (RBAC). I implemented a highly granular, resource-and-action-based permission system (e.g., `procurement.purchase_request.read_company`) where the UI automatically adapts and gates views or actions based on the user's explicit capabilities and department scope. I also built a custom optimistic update hook for transaction states, utilizing a Set of pending IDs to reflect card operations immediately.",
     results:
-      "The ecosystem is in production, streamlining company expenses, purchase requests, and approvals into a seamless experience. The optimistic UI patterns drastically reduced perceived latency, and the strictly bounded components ensure absolute data integrity across app.villeto.com, vendors.villeto.com, and villeto.com.",
+      "The ecosystem is live in production across 3 web apps (app.villeto.com, vendors.villeto.com, and villeto.com). Optimistic UI patterns reduced perceived latency to under 100ms for card and expense operations, achieving a 99 Lighthouse performance score and ensuring strict data integrity across 7 core financial products.",
     codeSnippet: {
       language: "tsx",
       description:
@@ -375,70 +375,15 @@ export function RoleGate({ permission, children, fallback = null }: RoleGateProp
     },
   },
   {
-    slug: "fastpay",
-    name: "Fastpay",
-    tagline: "Digital Banking Simulation Platform",
-    category: ["Fintech", "Web App"],
-    status: "In Progress",
-    liveUrl: "https://fastpayy.vercel.app/",
-    githubUrl: "https://github.com/hatykuxordik/fastpay",
-    color: "#10b981",
-    image: "/assets/projects/fastpay.png",
-    imageAlt:
-      "Fastpay banking app — real-time transaction analytics dashboard showing account balance and recent transfers",
-    outcome:
-      "Full-featured banking simulator with real-time sync and PWA support",
-    stack: ["Next.js", "TypeScript", "Supabase", "Recharts", "Tailwind CSS"],
-    featured: true,
-    overview:
-      "Fastpay is a full-featured digital banking simulation platform that replicates the core experience of a modern banking app — account management, fund transfers, transaction history, and analytics dashboards — built to demonstrate production-level fintech frontend architecture.",
-    problem:
-      "Most banking app demos are shallow: a single screen with hardcoded data. Fastpay was designed to be the opposite — a complete simulation with real authentication, real-time data updates, and actual charts that respond to user actions. The challenge was making it feel like a real product without a real bank behind it.",
-    process:
-      "Supabase provided the real-time foundation — its PostgreSQL realtime subscriptions mean transaction tables update live across browser tabs. I used Recharts for the analytics layer because it's tree-shakeable and handles financial data visualization cleanly. The PWA layer was added to enable offline access to account summaries.",
-    technicalDeepDive:
-      "The transaction engine uses Supabase row-level security policies to ensure each user only ever sees their own data — even in a shared simulation environment. This gave me the opportunity to design proper RLS policies from scratch, which is a skill directly transferable to production fintech work.",
-    results:
-      "A live, deployed platform demonstrating end-to-end fintech product skills. The real-time sync works across devices, the PWA install works on mobile, and the analytics charts handle edge cases like empty states and loading skeletons without layout shift.",
-    codeSnippet: {
-      language: "typescript",
-      description: "Real-time transaction subscription with Supabase",
-      code: `// hooks/useTransactions.ts
-export function useTransactions(userId: string) {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  
-  useEffect(() => {
-    const channel = supabase
-      .channel('transactions')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'transactions',
-        filter: \`user_id=eq.\${userId}\`,
-      }, (payload) => {
-        if (payload.eventType === 'INSERT') {
-          setTransactions(prev => [payload.new as Transaction, ...prev]);
-        }
-      })
-      .subscribe();
-      
-    return () => { supabase.removeChannel(channel); };
-  }, [userId]);
-  
-  return transactions;
-}`,
-    },
-  },
-  {
     slug: "unistudyhub",
     name: "UniStudyHub",
     tagline: "The Ultimate University Study & Assessment Platform",
     category: ["EdTech", "Web App", "AI & Data"],
-    status: "In Progress",
+    status: "Live",
     liveUrl: "https://unistudyhub.vercel.app/",
-    githubUrl: "https://github.com/Hatykuxordik/unistudyhub", // Assuming this is the repo
+    githubUrl: "https://github.com/Hatykuxordik/unistudyhub",
     color: "#f59e0b", // Amber theme
-    image: "/assets/projects/unistudyhub.png", // Add a screenshot to your assets folder!
+    image: "/assets/projects/unistudyhub.png",
     imageAlt:
       "UniStudyHub reading interface with AI explanations, mathematical rendering, and global leaderboard",
     outcome:
@@ -494,6 +439,61 @@ function rankEntries(raw: LeaderboardEntry[]) {
     }
     return { ...entry, rank: pos };
   });
+}`,
+    },
+  },
+  {
+    slug: "fastpay",
+    name: "Fastpay",
+    tagline: "Digital Banking Simulation Platform",
+    category: ["Fintech", "Web App"],
+    status: "In Progress",
+    liveUrl: "https://fastpayy.vercel.app/",
+    githubUrl: "https://github.com/hatykuxordik/fastpay",
+    color: "#10b981",
+    image: "/assets/projects/fastpay.png",
+    imageAlt:
+      "Fastpay banking app — real-time transaction analytics dashboard showing account balance and recent transfers",
+    outcome:
+      "Full-featured banking simulator with real-time sync and PWA support",
+    stack: ["Next.js", "TypeScript", "Supabase", "Recharts", "Tailwind CSS"],
+    featured: true,
+    overview:
+      "Fastpay is a full-featured digital banking simulation platform that replicates the core experience of a modern banking app — account management, fund transfers, transaction history, and analytics dashboards — built to demonstrate production-level fintech frontend architecture.",
+    problem:
+      "Most banking app demos are shallow: a single screen with hardcoded data. Fastpay was designed to be the opposite — a complete simulation with real authentication, real-time data updates, and actual charts that respond to user actions. The challenge was making it feel like a real product without a real bank behind it.",
+    process:
+      "Supabase provided the real-time foundation — its PostgreSQL realtime subscriptions mean transaction tables update live across browser tabs. I used Recharts for the analytics layer because it's tree-shakeable and handles financial data visualization cleanly. The PWA layer was added to enable offline access to account summaries.",
+    technicalDeepDive:
+      "The transaction engine uses Supabase row-level security policies to ensure each user only ever sees their own data — even in a shared simulation environment. This gave me the opportunity to design proper RLS policies from scratch, which is a skill directly transferable to production fintech work.",
+    results:
+      "A live, deployed platform demonstrating end-to-end fintech product skills. The real-time sync works across devices, the PWA install works on mobile, and the analytics charts handle edge cases like empty states and loading skeletons without layout shift.",
+    codeSnippet: {
+      language: "typescript",
+      description: "Real-time transaction subscription with Supabase",
+      code: `// hooks/useTransactions.ts
+export function useTransactions(userId: string) {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  
+  useEffect(() => {
+    const channel = supabase
+      .channel('transactions')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'transactions',
+        filter: \`user_id=eq.\${userId}\`,
+      }, (payload) => {
+        if (payload.eventType === 'INSERT') {
+          setTransactions(prev => [payload.new as Transaction, ...prev]);
+        }
+      })
+      .subscribe();
+      
+    return () => { supabase.removeChannel(channel); };
+  }, [userId]);
+  
+  return transactions;
 }`,
     },
   },
@@ -728,13 +728,40 @@ export const currentlyBuilding = [
     github: "https://github.com/hatykuxordik/fastpay",
   },
   {
-  name: "UniStudyHub",
-  description: "AI-powered university study & assessment platform",
-  status: "In Progress",
-  url: null,
-  github: "https://github.com/Hatykuxordik/unistudyhub",
-},
+    name: "GameSnap",
+    description: "Live sports data platform",
+    status: "In Progress" as const,
+    url: null,
+    github: "https://github.com/hatykuxordik/gamesnap",
+  },
 ] as const;
+
+export interface Testimonial {
+  quote: string;
+  author: string;
+  role: string;
+  company: string;
+  project?: string;
+}
+
+export const testimonials: Testimonial[] = [
+  {
+    quote:
+      "Sodiq was instrumental in building the Villeto frontend ecosystem. He translated complex financial workflows and granular RBAC into lightning-fast, intuitive dashboards with incredible attention to detail.",
+    author: "Villeto Team",
+    role: "Engineering & Product",
+    company: "Villeto",
+    project: "Villeto",
+  },
+  {
+    quote:
+      "The custom booking flow and AI concierge Sodiq built for ODM Groove Hotel measurably increased our direct reservations and cut third-party commission overhead from month one.",
+    author: "Management",
+    role: "Operations Lead",
+    company: "ODM Groove Hotel",
+    project: "ODM Groove Hotel",
+  },
+];
 
 export const usesPage = {
   framework: {

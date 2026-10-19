@@ -20,37 +20,43 @@ const PROJECT_TYPES = [
     value: "landing-page",
     label: "Landing Page",
     desc: "Single-page marketing or product site",
-    price: "From $350",
+    priceUSD: "From $350",
+    priceNGN: "From ₦580,000",
   },
   {
     value: "business-website",
     label: "Business Website",
     desc: "Multi-page professional website",
-    price: "From $1,500",
+    priceUSD: "From $1,500",
+    priceNGN: "From ₦2,475,000",
   },
   {
     value: "web-app",
     label: "Web Application",
     desc: "Feature-rich app with user accounts",
-    price: "From $2,500",
+    priceUSD: "From $2,500",
+    priceNGN: "From ₦4,125,000",
   },
   {
     value: "dashboard",
     label: "Dashboard",
     desc: "Data-heavy analytics or admin panel",
-    price: "From $3,500",
+    priceUSD: "From $3,500",
+    priceNGN: "From ₦5,775,000",
   },
   {
     value: "mobile-app",
     label: "Mobile App",
     desc: "React Native or PWA",
-    price: "From $6,000",
+    priceUSD: "From $6,000",
+    priceNGN: "From ₦9,900,000",
   },
   {
     value: "custom",
     label: "Custom / Something Else",
     desc: "Let's scope it together",
-    price: "Custom quote",
+    priceUSD: "Custom quote",
+    priceNGN: "Custom quote",
   },
 ];
 
@@ -102,13 +108,40 @@ const TIMELINES = [
   },
 ];
 
-const BUDGETS = [
+// USD budget options
+const USD_BUDGETS = [
   { value: "under-1k", label: "Under $1,000" },
   { value: "1k-3k", label: "$1,000 – $3,000" },
   { value: "3k-6k", label: "$3,000 – $6,000" },
   { value: "6k-plus", label: "$6,000+" },
   { value: "lets-talk", label: "Let's talk" },
 ];
+
+// NGN budget options (fixed, not converted)
+const NGN_BUDGETS = [
+  { value: "under-500k", label: "Under ₦500,000" },
+  { value: "500k-1.5m", label: "₦500k – ₦1.5M" },
+  { value: "1.5m-3m", label: "₦1.5M – ₦3M" },
+  { value: "3m-plus", label: "₦3M+" },
+  { value: "lets-talk", label: "Let's talk" },
+];
+
+// Numeric ceilings — must match route.ts NGN_BUDGET_CEILINGS / USD_BUDGET_CEILINGS
+const USD_CEILINGS: Record<string, number> = {
+  "under-1k": 1000,
+  "1k-3k": 3000,
+  "3k-6k": 6000,
+  "6k-plus": Infinity,
+  "lets-talk": Infinity,
+};
+const NGN_CEILINGS: Record<string, number> = {
+  "under-500k": 500_000,
+  "500k-1.5m": 1_500_000,
+  "1.5m-3m": 3_000_000,
+  "3m-plus": Infinity,
+  "lets-talk": Infinity,
+};
+
 
 const STEP_LABELS = ["Project Type", "Timeline", "Your Info", "Estimate"];
 
@@ -120,6 +153,7 @@ interface EstimateResult {
   low: number;
   high: number;
   weeks: string;
+  currency: "USD" | "NGN";
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -283,8 +317,10 @@ async function generateQuotePDF(opts: {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(24);
   doc.setTextColor(...amber);
+  const pdfCurr = opts.estimate.currency === "NGN" ? "NGN " : "$";
+  const pdfLocale = opts.estimate.currency === "NGN" ? "en-NG" : "en-US";
   doc.text(
-    `$${opts.estimate.low.toLocaleString()} – $${opts.estimate.high.toLocaleString()}`,
+    `${pdfCurr}${opts.estimate.low.toLocaleString(pdfLocale)} – ${pdfCurr}${opts.estimate.high.toLocaleString(pdfLocale)}`,
     margin + 6,
     y + 20,
   );
@@ -424,6 +460,8 @@ export default function EstimatePage() {
   const [features, setFeatures] = useState<string[]>([]);
   const [timeline, setTimeline] = useState("");
   const [budget, setBudget] = useState("");
+  const [currency, setCurrency] = useState<"USD" | "NGN">("USD");
+  const [honeypot, setHoneypot] = useState(""); // stays empty for real users
   const [contact, setContact] = useState({ name: "", email: "", company: "" });
   const [contactErrors, setContactErrors] = useState<Record<string, string>>(
     {},
@@ -432,6 +470,15 @@ export default function EstimatePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isPdfLoading, setIsPdfLoading] = useState(false);
   const [apiError, setApiError] = useState("");
+
+  // Currency-aware derived values
+  const BUDGETS = currency === "NGN" ? NGN_BUDGETS : USD_BUDGETS;
+  const BUDGET_CEILINGS = currency === "NGN" ? NGN_CEILINGS : USD_CEILINGS;
+
+  function switchCurrency(next: "USD" | "NGN") {
+    setCurrency(next);
+    setBudget(""); // reset budget so stale USD/NGN value doesn't carry over
+  }
 
   function toggleFeature(val: string) {
     setFeatures((prev) =>
@@ -462,7 +509,9 @@ export default function EstimatePage() {
           projectType,
           features,
           timeline,
+          currency,
           budgetRange: budget || "lets-talk",
+          honeypot,
           ...contact,
         }),
       });
@@ -672,16 +721,66 @@ export default function EstimatePage() {
         ══════════════════════════════════════════════ */}
         {step === 1 && (
           <div>
-            <h2
+            <div
               style={{
-                fontSize: "var(--text-2xl)",
-                fontWeight: 700,
-                color: "var(--text-primary)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+                gap: "var(--space-3)",
                 marginBottom: "var(--space-4)",
               }}
             >
-              What are we building?
-            </h2>
+              <h2
+                style={{
+                  fontSize: "var(--text-2xl)",
+                  fontWeight: 700,
+                  color: "var(--text-primary)",
+                  margin: 0,
+                }}
+              >
+                What are we building?
+              </h2>
+
+              {/* Currency toggle */}
+              <div
+                style={{
+                  display: "inline-flex",
+                  gap: "4px",
+                  padding: "4px",
+                  background: "var(--bg-elevated)",
+                  border: "1px solid var(--border-subtle)",
+                  borderRadius: "10px",
+                }}
+                role="group"
+                aria-label="Select currency"
+              >
+                {(["USD", "NGN"] as const).map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => switchCurrency(c)}
+                    aria-pressed={currency === c}
+                    style={{
+                      padding: "6px 16px",
+                      borderRadius: "7px",
+                      border: "none",
+                      background:
+                        currency === c ? "var(--accent)" : "transparent",
+                      color:
+                        currency === c ? "#fff" : "var(--text-secondary)",
+                      fontWeight: currency === c ? 700 : 400,
+                      fontSize: "var(--text-xs)",
+                      fontFamily: "var(--font-mono)",
+                      cursor: "pointer",
+                      transition: "all 0.18s ease",
+                    }}
+                  >
+                    {c === "USD" ? "$ USD" : "₦ NGN"}
+                  </button>
+                ))}
+              </div>
+            </div>
 
             {/* Project type grid */}
             <div
@@ -730,7 +829,7 @@ export default function EstimatePage() {
                       marginTop: "8px",
                     }}
                   >
-                    {type.price}
+                    {currency === "NGN" ? type.priceNGN : type.priceUSD}
                   </p>
                 </button>
               ))}
@@ -904,6 +1003,59 @@ export default function EstimatePage() {
                         {t.desc}
                       </p>
                     </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Currency toggle */}
+            <div style={{ marginBottom: "var(--space-4)" }}>
+              <h3
+                style={{
+                  fontSize: "var(--text-xs)",
+                  fontFamily: "var(--font-mono)",
+                  letterSpacing: "0.05em",
+                  textTransform: "uppercase",
+                  color: "var(--text-muted)",
+                  marginBottom: "var(--space-2)",
+                }}
+              >
+                Currency
+              </h3>
+              <div
+                style={{
+                  display: "inline-flex",
+                  gap: "4px",
+                  padding: "4px",
+                  background: "var(--bg-elevated)",
+                  border: "1px solid var(--border-subtle)",
+                  borderRadius: "10px",
+                }}
+                role="group"
+                aria-label="Select currency"
+              >
+                {(["USD", "NGN"] as const).map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => switchCurrency(c)}
+                    aria-pressed={currency === c}
+                    style={{
+                      padding: "6px 18px",
+                      borderRadius: "7px",
+                      border: "none",
+                      background:
+                        currency === c ? "var(--accent)" : "transparent",
+                      color:
+                        currency === c
+                          ? "#fff"
+                          : "var(--text-secondary)",
+                      fontWeight: currency === c ? 700 : 400,
+                      fontSize: "var(--text-sm)",
+                      cursor: "pointer",
+                      transition: "all 0.18s ease",
+                    }}
+                  >
+                    {c === "USD" ? "$ USD" : "₦ NGN"}
                   </button>
                 ))}
               </div>
@@ -1142,6 +1294,31 @@ export default function EstimatePage() {
                 />
               </div>
 
+              {/* Honeypot — hidden from real users, bots fill it */}
+              <div
+                aria-hidden="true"
+                style={{
+                  position: "absolute",
+                  left: "-9999px",
+                  width: "1px",
+                  height: "1px",
+                  overflow: "hidden",
+                  opacity: 0,
+                  pointerEvents: "none",
+                }}
+              >
+                <label htmlFor="est-hp">Leave this blank</label>
+                <input
+                  id="est-hp"
+                  name="hp"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                />
+              </div>
+
               {/* API error */}
               {apiError && (
                 <div
@@ -1303,8 +1480,15 @@ export default function EstimatePage() {
                       marginBottom: "10px",
                     }}
                   >
-                    ${estimate.low.toLocaleString()} – $
-                    {estimate.high.toLocaleString()}
+                    {estimate.currency === "NGN" ? "\u20a6" : "$"}
+                    {estimate.low.toLocaleString(
+                      estimate.currency === "NGN" ? "en-NG" : "en-US",
+                    )}{" "}
+                    –{" "}
+                    {estimate.currency === "NGN" ? "\u20a6" : "$"}
+                    {estimate.high.toLocaleString(
+                      estimate.currency === "NGN" ? "en-NG" : "en-US",
+                    )}
                   </div>
                   <p
                     style={{
@@ -1329,7 +1513,43 @@ export default function EstimatePage() {
                   </p>
                 </div>
 
+                {/* Budget mismatch note */}
+                {estimate.low > (BUDGET_CEILINGS[budget] ?? Infinity) && (
+                  <div
+                    role="note"
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: "10px",
+                      padding: "14px 16px",
+                      backgroundColor: "rgba(251,191,36,0.08)",
+                      border: "1px solid rgba(251,191,36,0.35)",
+                      borderRadius: "10px",
+                      marginBottom: "var(--space-5)",
+                    }}
+                  >
+                    <span style={{ fontSize: "1.1rem", lineHeight: 1 }}>⚠️</span>
+                    <p
+                      style={{
+                        fontSize: "var(--text-sm)",
+                        color: "var(--text-secondary)",
+                        margin: 0,
+                        lineHeight: 1.55,
+                      }}
+                    >
+                      This estimate exceeds your selected budget range. Consider
+                      removing some add-ons to bring the cost closer to your
+                      target, or{" "}
+                      <strong style={{ color: "var(--text-primary)" }}>
+                        let&apos;s talk
+                      </strong>{" "}
+                      — we can phase the build to fit your budget.
+                    </p>
+                  </div>
+                )}
+
                 {/* Actions */}
+
                 <div
                   style={{
                     display: "flex",

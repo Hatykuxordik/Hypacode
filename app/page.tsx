@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import HeroSection from "@/components/sections/HeroSection";
 import MicroCaseStudy from "@/components/sections/MicroCaseStudy";
 import FeaturedProjects from "@/components/sections/FeaturedProjects";
-// import HomepageCTA from "@/components/sections/HomepageCTA";
+import TestimonialsSection from "@/components/sections/TestimonialsSection";
 
 export const metadata: Metadata = {
   title: "Hypacode — Frontend Engineer | Sodiq Atiku",
@@ -16,7 +16,7 @@ export default function HomePage() {
       <HeroSection />
       <MicroCaseStudy />
       <FeaturedProjects />
-      {/* <HomepageCTA /> */}
+      <TestimonialsSection />
     </>
   );
 }
