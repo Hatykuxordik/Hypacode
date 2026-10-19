@@ -138,6 +138,7 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large" },
   },
   verification: {
+    google: "KOr8VD45R0eIUNpYmD5DlevdY31QNE_sXoY0dNbmpMI",
     other: { "msvalidate.01": "A2EEB7B5D7316FD54C09F1E639B6B579" },
   },
   alternates: {
