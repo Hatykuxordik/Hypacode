@@ -1,13 +1,12 @@
 import Image from "next/image";
-import Link from "next/link";
-import { personalInfo, projects, currentlyBuilding } from "@/lib/data";
+import { personalInfo } from "@/lib/data";
 import CodeWindow from "@/components/CodeWindow";
 import MagneticButton from "@/components/ui/MagneticButton";
 
 export default function HeroSection() {
-  const filenames = ["useSpendData.ts", "api/estimate.ts", "motion.config.ts"];
   return (
     <section
+      className="hero-section"
       style={{
         paddingTop: `calc(var(--navbar-height) + clamp(24px, 4vw, 48px))`, // Tighter clamp, uses var for mobile/desktop
         paddingBottom: "clamp(32px, 5vw, 64px)", // Reduced for less bottom space
@@ -52,45 +51,6 @@ export default function HeroSection() {
             alignItems: "center",
           }}
         >
-          <style>{`
-              :root {
-                --navbar-height: 72px; /* Desktop default */
-              }
-              @media (max-width: 767px) {
-                :root {
-                  --navbar-height: 50px; /* Mobile topbar */
-                }
-                .hero-section {
-                  align-items: flex-start !important; /* Push content up on mobile to reduce bottom space */
-                  padding-top: calc(var(--navbar-height) + 24px) !important; /* Override for even tighter top */
-                }
-                .hero-subheadline {
-                  max-width: 90% !important; /* Better wrapping on small screens */
-                }
-              }
-              @media (min-width: 1024px) {
-                .hero-grid { grid-template-columns: 55% 1fr !important; }
-                .hero-code { display: flex !important; }
-              }
-              @media (max-width: 767px) {
-                :root {
-                  --text-hero: clamp(2rem, 4vw + 1rem, 36px); /* Min 32px, fluid, max 36px */
-                 }
-                  
-                .hero-code {
-                  display: flex !important; /* Make visible and flex */
-                  flex-direction: column !important;
-                  align-items: center !important; /* Center child horizontally */
-                  justify-content: center !important; /* Optional: vertical centering if needed */
-                  width: 100%; /* Ensure full width */
-                  margin: 0 auto; /* Symmetric margins */
-                  padding: 0; /* Reset any asymmetric padding */
-                }
-                .code-window {
-                  margin: 0 auto; /* Center within wrapper */
-                }
-              }
-            `}</style>
           <div
             className="hero-grid"
             style={{
@@ -146,7 +106,7 @@ export default function HeroSection() {
                 }}
               >
                 <span style={{ color: "var(--accent-light)" }}>Hypacode</span>
-                &nbsp;· Frontend Engineer · Lagos, NG
+                &nbsp;· Remote Frontend &amp; Full-Stack Next.js Engineer · UTC+1
               </p>
 
               {/* Headline */}
@@ -181,12 +141,13 @@ export default function HeroSection() {
                   fontSize: "var(--text-lg)",
                   color: "var(--text-secondary)",
                   lineHeight: 1.65,
-                  maxWidth: "520px",
+                  maxWidth: "540px",
                   marginBottom: "clamp(16px, 2.5vw, 28px)", // Tighter
                 }}
               >
-                Next.js & React for teams that refuse slow, fragile or
-                forgettable.
+                Fast, accessible React, Next.js &amp; TypeScript web apps,
+                fintech dashboards, Supabase/API integrations, and landing pages
+                — shipped remotely for UK, US, EU &amp; global teams.
               </p>
 
               {/* CTAs */}
@@ -242,7 +203,7 @@ export default function HeroSection() {
                 >
                   <Image
                     src="/assets/sodiq-atiku.jpg"
-                    alt="Sodiq Atiku"
+                    alt="Sodiq Atiku, Frontend Engineer based in Lagos, Nigeria"
                     width={48}
                     height={48}
                     style={{
@@ -272,7 +233,7 @@ export default function HeroSection() {
                       textTransform: "uppercase",
                     }}
                   >
-                    LAGOS, NG · UTC+1
+                    REMOTE WORLDWIDE · UK / EU / US OVERLAP (UTC+1)
                   </p>
                 </div>
               </div>

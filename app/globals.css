@@ -865,3 +865,89 @@ video {
 .hover-scale:hover {
   transform: scale(1.08);
 }
+.hover-accent-link {
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent-border);
+  transition: color 0.2s, border-color 0.2s;
+}
+.hover-accent-link:hover {
+  color: var(--accent-light);
+  border-bottom-color: var(--accent-light);
+}
+.hover-accent-text {
+  color: var(--accent);
+  transition: color 0.2s;
+}
+.hover-accent-text:hover {
+  color: var(--accent-light);
+}
+.hover-pill-link {
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  transition: color 0.2s, border-color 0.2s, transform 0.2s;
+}
+.hover-pill-link:hover {
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+.hover-bg-accent {
+  background: var(--accent);
+  transition: background 0.2s, transform 0.2s;
+}
+.hover-bg-accent:hover {
+  background: var(--accent-hover);
+}
+
+/* ── LANDING PAGE LAYOUT & GRIDS ──────────────────────────────  */
+@media (max-width: 767px) {
+  .hero-section {
+    align-items: flex-start !important;
+    padding-top: calc(var(--navbar-height) + 24px) !important;
+  }
+  .hero-subheadline {
+    max-width: 90% !important;
+  }
+  .hero-code {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+  }
+  .code-window {
+    margin: 0 auto;
+  }
+}
+@media (min-width: 768px) {
+  .micro-case-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+@media (min-width: 1024px) {
+  .hero-grid {
+    grid-template-columns: 55% 1fr !important;
+  }
+  .hero-code {
+    display: flex !important;
+  }
+  .project-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .project-grid .image-wrapper {
+    order: 1;
+  }
+  .project-grid .content-wrapper {
+    order: 2;
+  }
+  .project-grid.project-odd .image-wrapper {
+    order: 2;
+  }
+  .project-grid.project-odd .content-wrapper {
+    order: 1;
+  }
+}
+.group:hover .hover-overlay {
+  opacity: 1 !important;
+}

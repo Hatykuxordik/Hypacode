@@ -30,7 +30,7 @@ export default function CustomCursor() {
       dotY = 0;
     let targetX = 0,
       targetY = 0;
-    let rafId: number;
+    let rafId = 0;
 
     function lerp(a: number, b: number, t: number) {
       return a + (b - a) * t;
@@ -51,12 +51,22 @@ export default function CustomCursor() {
         dotRef.current.style.left = `${dotX}px`;
         dotRef.current.style.top = `${dotY}px`;
       }
-      rafId = requestAnimationFrame(tick);
+
+      const settled =
+        Math.abs(targetX - ringX) < 0.1 && Math.abs(targetY - ringY) < 0.1;
+      if (settled) {
+        rafId = 0;
+      } else {
+        rafId = requestAnimationFrame(tick);
+      }
     }
 
     function onMouseMove(e: MouseEvent) {
       targetX = e.clientX;
       targetY = e.clientY;
+      if (!rafId) {
+        rafId = requestAnimationFrame(tick);
+      }
     }
 
     function onMouseEnter(e: MouseEvent) {
@@ -69,12 +79,11 @@ export default function CustomCursor() {
 
     document.addEventListener("mousemove", onMouseMove, { passive: true });
     document.addEventListener("mouseover", onMouseEnter, { passive: true });
-    rafId = requestAnimationFrame(tick);
 
     return () => {
       document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseover", onMouseEnter);
-      cancelAnimationFrame(rafId);
+      if (rafId) cancelAnimationFrame(rafId);
     };
   }, []);
 

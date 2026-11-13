@@ -1,25 +1,25 @@
 import { NextResponse } from "next/server";
 import { projects } from "@/lib/data";
+import { INDEXNOW_KEY, SITE_URL } from "@/lib/seo";
 
-const BASE_URL = "https://hypacode.vercel.app";
-const INDEXNOW_KEY = "46d9d51704a346c885dd34524d24a0e1";
-const KEY_LOCATION = `${BASE_URL}/${INDEXNOW_KEY}.txt`;
+const KEY_LOCATION = `${SITE_URL}/${INDEXNOW_KEY}.txt`;
+const HOST = new URL(SITE_URL).host;
 
-// All URLs to submit to IndexNow (Bing, Yandex, Seznam)
+// All indexable URLs to submit to IndexNow (Bing, Yandex, Seznam)
 const STATIC_URLS = [
-  BASE_URL,
-  `${BASE_URL}/about`,
-  `${BASE_URL}/projects`,
-  `${BASE_URL}/skills`,
-  `${BASE_URL}/estimate`,
-  `${BASE_URL}/process`,
-  `${BASE_URL}/contact`,
-  `${BASE_URL}/uses`,
+  SITE_URL,
+  `${SITE_URL}/services`,
+  `${SITE_URL}/about`,
+  `${SITE_URL}/projects`,
+  `${SITE_URL}/skills`,
+  `${SITE_URL}/estimate`,
+  `${SITE_URL}/process`,
+  `${SITE_URL}/contact`,
 ];
 
 const PROJECT_URLS = projects
   .filter((p) => !["hypacode-portfolio", "e-commerce", "wild-oasis"].includes(p.slug))
-  .map((p) => `${BASE_URL}/projects/${p.slug}`);
+  .map((p) => `${SITE_URL}/projects/${p.slug}`);
 
 const ALL_URLS = [...STATIC_URLS, ...PROJECT_URLS];
 
@@ -30,7 +30,7 @@ export async function GET() {
       method: "POST",
       headers: { "Content-Type": "application/json; charset=utf-8" },
       body: JSON.stringify({
-        host: "hypacode.vercel.app",
+        host: HOST,
         key: INDEXNOW_KEY,
         keyLocation: KEY_LOCATION,
         urlList: ALL_URLS,

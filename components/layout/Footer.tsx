@@ -13,8 +13,13 @@ const socialLinks = [
 ];
 
 const siteLinks = [
+  { label: "Services", url: "/services" },
+  { label: "Projects", url: "/projects" },
+  { label: "Skills", url: "/skills" },
+  { label: "About", url: "/about" },
   { label: "How I Work", url: "/process" },
   { label: "Get an Estimate", url: "/estimate" },
+  { label: "Contact", url: "/contact" },
 ];
 
 
@@ -67,14 +72,14 @@ function IconArrowUpRight() {
 
 const Footer = () => {
   return (
-    <section
+    <div
       style={{
         borderTop: "1px solid var(--border)",
         maxWidth: "100vw",
         padding: "clamp(32px, 4vw, 48px) clamp(20px, 4vw, 64px)",
       }}
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-6 items-center ">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 items-start md:items-center">
         {/* ── COL 1: Brand ── */}
         <div
           style={{
@@ -112,9 +117,9 @@ const Footer = () => {
           </p>
         </div>
 
-        {/* ── COL 2: Social links — hidden on mobile ── */}
+        {/* ── COL 2: Site & Social links (visible on mobile for crawlability & UX) ── */}
         <nav
-          className="hidden md:flex gap-1 items-center justify-around"
+          className="flex flex-wrap gap-1 items-center justify-start md:justify-around"
           aria-label="Footer links"
         >
           {siteLinks.map((link) => (
@@ -165,8 +170,8 @@ const Footer = () => {
           ))}
         </nav>
 
-        {/* ── COL 3: Actions — hidden on mobile ── */}
-        <div className="hidden md:flex md:flex-col gap-2.5 items-end">
+        {/* ── COL 3: Actions ── */}
+        <div className="flex flex-col gap-2.5 items-start md:items-end">
           <Link
             href={personalInfo.resumeUrl}
             download="Sodiq-Atiku-Frontend-Developer-Resume.pdf"
@@ -235,7 +240,7 @@ const Footer = () => {
         <span>© {new Date().getFullYear()} Hypacode. All rights reserved.</span>
         <span>Lagos, NG</span>
       </div>
-    </section>
+    </div>
   );
 };
 

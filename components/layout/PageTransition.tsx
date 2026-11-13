@@ -102,11 +102,6 @@ export default function PageTransition({
           id="main-content"
           role="main"
           className="flex flex-col items-center"
-          style={{
-            // GPU compositing hint — browser promotes to own layer
-            // Prevents transition from triggering paint on surrounding elements
-            willChange: "opacity, transform",
-          }}
         >
           {children}
         </motion.main>

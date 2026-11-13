@@ -266,7 +266,6 @@ function DesktopHeader({
     <div
       className="hypa-navbar-header"
       data-scrolled={String(scrolled)}
-      role="banner"
     >
       <motion.div
         className="hypa-header-inner"

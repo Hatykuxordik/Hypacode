@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { projects } from "@/lib/data";
@@ -58,26 +56,16 @@ export default function FeaturedProjects() {
           </div>
           <Link
             href="/projects"
+            className="hover-pill-link"
             style={{
               display: "flex",
               alignItems: "center",
               gap: 8,
               fontSize: "var(--text-sm)",
-              color: "var(--text-secondary)",
               textDecoration: "none",
-              border: "1px solid var(--border)",
               padding: "8px clamp(12px, 1.5vw, 16px)",
               borderRadius: 999,
-              transition: "color 0.2s, border-color 0.2s, transform 0.2s",
               minHeight: 40,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = "var(--text-primary)";
-              e.currentTarget.style.borderColor = "var(--border-strong)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = "var(--text-secondary)";
-              e.currentTarget.style.borderColor = "var(--border)";
             }}
           >
             All Projects
@@ -94,25 +82,6 @@ export default function FeaturedProjects() {
           </Link>
         </div>
       </div>
-
-      {/* Global styles for layout + hover (only once) */}
-      <style>{`
-        @media (min-width: 1024px) {
-          .project-grid {
-            grid-template-columns: 1fr 1fr !important;
-          }
-          .project-grid .image-wrapper { order: 1; }
-          .project-grid .content-wrapper { order: 2; }
-          .project-grid.project-odd .image-wrapper { order: 2; }
-          .project-grid.project-odd .content-wrapper { order: 1; }
-        }
-        .group:hover .project-img {
-          transform: scale(1.03);
-        }
-        .group:hover .hover-overlay {
-          opacity: 1 !important;
-        }
-      `}</style>
 
       {/* Project cards */}
       <div
@@ -150,9 +119,9 @@ export default function FeaturedProjects() {
                 >
                   <Image
                     src={project.image}
-                    alt={`Screenshot of ${project.name} — ${project.tagline}`}
+                    alt={project.imageAlt}
                     fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
+                    sizes="(max-width: 1023px) 100vw, 50vw"
                     style={{
                       objectFit: "cover",
                       objectPosition: "top",
@@ -177,26 +146,18 @@ export default function FeaturedProjects() {
                   >
                     <Link
                       href={`/projects/${project.slug}`}
+                      className="hover-bg-accent"
                       style={{
                         display: "flex",
                         alignItems: "center",
                         gap: 8,
                         padding: "10px 20px",
-                        background: "var(--accent)",
                         color: "var(--text-on-accent)",
                         fontSize: "var(--text-sm)",
                         fontWeight: 600,
                         borderRadius: "clamp(6px, 1vw, 12px)",
                         textDecoration: "none",
-                        transition: "background 0.2s, transform 0.2s",
                         minHeight: 40,
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background =
-                          "var(--accent-hover)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = "var(--accent)";
                       }}
                     >
                       View Case Study
@@ -343,21 +304,14 @@ export default function FeaturedProjects() {
                 >
                   <Link
                     href={`/projects/${project.slug}`}
+                    className="hover-accent-text"
                     style={{
                       display: "flex",
                       alignItems: "center",
                       gap: 8,
                       fontSize: "var(--text-sm)",
                       fontWeight: 600,
-                      color: "var(--accent)",
                       textDecoration: "none",
-                      transition: "color 0.2s",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = "var(--accent-light)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = "var(--accent)";
                     }}
                     aria-label={`View case study for ${project.name}`}
                   >
@@ -369,6 +323,7 @@ export default function FeaturedProjects() {
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2.5"
+                      aria-hidden="true"
                     >
                       <path d="M5 12h14M12 5l7 7-7 7" />
                     </svg>
@@ -379,6 +334,7 @@ export default function FeaturedProjects() {
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      className="hover-text"
                       style={{
                         display: "flex",
                         alignItems: "center",
@@ -388,16 +344,10 @@ export default function FeaturedProjects() {
                         textDecoration: "none",
                         transition: "color 0.2s",
                       }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.color = "var(--text-primary)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.color = "var(--text-secondary)";
-                      }}
                       aria-label={`Visit live site for ${project.name} (opens in new tab)`}
                     >
                       Live Site
-                      <ExternalLink size={12} />
+                      <ExternalLink size={12} aria-hidden="true" />
                     </a>
                   )}
                 </div>

@@ -1,11 +1,10 @@
-"use client";
-
 import Link from "next/link";
-import { ArrowRight, Zap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export default function MicroCaseStudy() {
   return (
     <section
+      aria-labelledby="micro-case-study-heading"
       style={{
         maxWidth: 1200,
         margin: "0 auto",
@@ -43,14 +42,6 @@ export default function MicroCaseStudy() {
           }}
           className="micro-case-grid"
         >
-          <style>{`
-        @media (min-width: 768px) {
-          .micro-case-grid {
-            grid-template-columns: 1fr 1fr !important;
-          }
-        }
-      `}</style>
-
           {/* Left */}
           <div>
             {/* Section label */}
@@ -69,6 +60,7 @@ export default function MicroCaseStudy() {
 
             {/* Headline */}
             <h2
+              id="micro-case-study-heading"
               className="font-display"
               style={{
                 fontSize: "clamp(28px, 4vw, 40px)",
@@ -177,6 +169,7 @@ export default function MicroCaseStudy() {
             <Link
               href="/projects/villeto"
               aria-label="View the full Villeto case study"
+              className="hover-accent-link"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -184,20 +177,8 @@ export default function MicroCaseStudy() {
                 marginTop: "clamp(16px, 2vw, 24px)",
                 fontSize: "var(--text-sm)",
                 fontWeight: 600,
-                color: "var(--accent)",
                 textDecoration: "none",
-                borderBottom: `1px solid var(--accent-border)`,
                 paddingBottom: 2,
-                transition: "color 0.2s, border-color 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = "var(--accent-light)";
-                e.currentTarget.style.borderBottomColor = "var(--accent-light)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = "var(--accent)";
-                e.currentTarget.style.borderBottomColor =
-                  "var(--accent-border)";
               }}
             >
               View Case Study

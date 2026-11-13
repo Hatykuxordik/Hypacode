@@ -17,25 +17,20 @@ export default function CodeWindow() {
 
   return (
     <div className="code-window">
-      <div className="snippet-tabs">
-        <div
-          className={`snippet-tab ${activeTab === 0 ? "active" : ""}`}
-          onClick={() => setActiveTab(0)}
-        >
-          useSpendData.ts
-        </div>
-        <div
-          className={`snippet-tab ${activeTab === 1 ? "active" : ""}`}
-          onClick={() => setActiveTab(1)}
-        >
-          api/estimate.ts
-        </div>
-        <div
-          className={`snippet-tab ${activeTab === 2 ? "active" : ""}`}
-          onClick={() => setActiveTab(2)}
-        >
-          motion.config.ts
-        </div>
+      <div className="snippet-tabs" role="tablist" aria-label="Code examples">
+        {filenames.map((name, i) => (
+          <button
+            key={name}
+            type="button"
+            role="tab"
+            aria-selected={activeTab === i}
+            className={`snippet-tab ${activeTab === i ? "active" : ""}`}
+            style={{ background: activeTab === i ? undefined : "transparent", borderTop: "none", borderBottom: "none", borderLeft: "none" }}
+            onClick={() => setActiveTab(i)}
+          >
+            {name}
+          </button>
+        ))}
       </div>
 
       <div className="code-titlebar">
@@ -274,7 +269,7 @@ export default function CodeWindow() {
             <span className="line-content">
               &nbsp;&nbsp;&nbsp;&nbsp;<span className="t-var">from</span>
               <span className="t-op">:</span>{" "}
-              <span className="t-str">'[email&#160;protected]'</span>
+              <span className="t-str">&apos;sodiq@hypacode.com&apos;</span>
               <span className="t-op">,</span>
             </span>
           </div>

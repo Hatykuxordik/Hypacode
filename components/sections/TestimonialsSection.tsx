@@ -53,8 +53,8 @@ export default function TestimonialsSection() {
         }}
       >
         {testimonials.map((t, i) => (
-          <div
-            key={i}
+          <figure
+            key={t.author}
             style={{
               background: "var(--bg-card)",
               border: "1px solid var(--border)",
@@ -66,10 +66,12 @@ export default function TestimonialsSection() {
               gap: 20,
               position: "relative",
               overflow: "hidden",
+              margin: 0,
             }}
           >
             {/* Top gradient highlight */}
             <div
+              aria-hidden="true"
               style={{
                 position: "absolute",
                 top: 0,
@@ -84,7 +86,7 @@ export default function TestimonialsSection() {
             />
 
             {/* Quote content */}
-            <div>
+            <blockquote style={{ margin: 0 }}>
               <MessageSquareQuote
                 size={28}
                 style={{
@@ -104,10 +106,10 @@ export default function TestimonialsSection() {
               >
                 &ldquo;{t.quote}&rdquo;
               </p>
-            </div>
+            </blockquote>
 
             {/* Author info */}
-            <div
+            <figcaption
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -119,15 +121,17 @@ export default function TestimonialsSection() {
               }}
             >
               <div>
-                <p
+                <cite
                   style={{
+                    display: "block",
+                    fontStyle: "normal",
                     fontSize: "var(--text-sm)",
                     fontWeight: 700,
                     color: "var(--text-primary)",
                   }}
                 >
                   {t.author}
-                </p>
+                </cite>
                 <p
                   style={{
                     fontSize: "var(--text-xs)",
@@ -154,8 +158,8 @@ export default function TestimonialsSection() {
                   {t.project}
                 </span>
               )}
-            </div>
-          </div>
+            </figcaption>
+          </figure>
         ))}
       </div>
     </section>
