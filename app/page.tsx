@@ -12,7 +12,7 @@ export const metadata: Metadata = {
       "Hypacode — Remote React, Next.js & Full-Stack Engineer for Hire",
   },
   description:
-    "Hire Sodiq Atiku (Hypacode) for fast, accessible React, Next.js & TypeScript web apps, fintech dashboards, Supabase & Stripe integrations, and landing pages. Remote worldwide (US, UK, EU, CA).",
+    "Hire Sodiq Atiku (Hypacode) for React, Next.js & TypeScript web apps, fintech dashboards, Supabase APIs, and landing pages. Remote for US, UK & EU teams.",
   alternates: {
     canonical: "/",
   },

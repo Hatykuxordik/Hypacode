@@ -7,7 +7,7 @@ import { PERSON_ID, SITE_URL, WEBSITE_ID } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "Services & Pricing — Remote React, Next.js & Full-Stack Development",
   description:
-    "Hire Sodiq Atiku (Hypacode) for React & Next.js web apps, fintech dashboards, Supabase & Stripe integrations, and high-converting landing pages. Transparent USD pricing, remote worldwide.",
+    "Remote React, Next.js & TypeScript development: fintech dashboards, Supabase & Stripe web apps, and landing pages. Transparent USD pricing worldwide.",
   alternates: { canonical: "/services" },
   openGraph: {
     title: "Services & Pricing — Remote React, Next.js & Full-Stack | Hypacode",

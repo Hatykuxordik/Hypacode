@@ -49,7 +49,7 @@ export const metadata: Metadata = {
       "Hypacode — Remote React, Next.js & Full-Stack Engineer for Hire",
   },
   description:
-    "Sodiq Atiku (Hypacode) is a remote frontend and full-stack Next.js engineer building fast, accessible React web apps, fintech dashboards, Supabase/API backends, and landing pages for clients worldwide.",
+    "Remote React, Next.js & TypeScript engineer building fast web apps, fintech dashboards, Supabase APIs, and landing pages for US, UK & global teams.",
   authors: [{ name: "Sodiq Atiku", url: SITE_URL }],
   creator: "Sodiq Atiku",
   openGraph: {
